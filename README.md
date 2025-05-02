@@ -12,9 +12,11 @@ This Rust project implements the **Chaum-Pedersen zero-knowledge proof protocol*
 ## 📖 What is Chaum-Pedersen?
 
 The Chaum-Pedersen protocol proves the equality of discrete logarithms in two groups:
+
 log_g(h) = log_g'(h')
 
 That is, the prover can show knowledge of a secret `x` such that:
+
 g^x = h and g'^x = h'
 
 without revealing `x`. This is useful in privacy-preserving cryptographic systems such as anonymous credentials, secure voting, and confidential authentication.
