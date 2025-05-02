@@ -1,4 +1,4 @@
-use num_bigint::BigUint;
+use num_bigint::{BigUint,RandBigInt};
 //          g^x mod p
 // output = n^exp mod p
 pub fn exponentiate(n: &BigUint, exp: &BigUint, p: &BigUint) -> BigUint {
@@ -33,3 +33,9 @@ pub fn verify(
 
     cond1 && cond2
 }
+
+// generate random number
+pub fn generate_random_less_than(bound:&BigUint)->BigUint{
+    let mut rng=rand::thread_rng();
+    rng.gen_biguint_below(bound)
+}   
