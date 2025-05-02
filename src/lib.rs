@@ -1,41 +1,50 @@
-use num_bigint::{BigUint,RandBigInt};
-//          g^x mod p
-// output = n^exp mod p
-pub fn exponentiate(n: &BigUint, exp: &BigUint, p: &BigUint) -> BigUint {
-    n.modpow(exp, p)
+use num_bigint::{BigUint, RandBigInt};
+
+// struct
+pub struct ZKP {
+    pub p: BigUint,
+    pub q: BigUint,
+    pub g: BigUint,
+    pub h: BigUint,
 }
 
-// output = s=(k-c*x) mod q
-pub fn solve(k: &BigUint, c: &BigUint, x: &BigUint, q: &BigUint) -> BigUint {
-    if *k >= c * x {
-        (k - c * x).modpow(&BigUint::from(1u32), q)
-        // (k-c*x)%q
-    } else {
-        q - (c * x - k).modpow(&BigUint::from(1u32), q)
-        // q-((c*x-k)%p)
+impl ZKP {
+    //          g^x mod p
+    // output = n^exp mod p
+    pub fn exponentiate(&self, n: &BigUint, exp: &BigUint) -> BigUint {
+        n.modpow(exp, &self.p)
+    }
+
+    // output = s=(k-c*x) mod q
+    pub fn solve(&self, k: &BigUint, c: &BigUint, x: &BigUint) -> BigUint {
+        if *k >= c * x {
+            (k - c * x).modpow(&BigUint::from(1u32), &self.q)
+            // (k-c*x)%q
+        } else {
+            &self.q - (c * x - k).modpow(&BigUint::from(1u32), &self.q)
+            // q-((c*x-k)%p)
+        }
+    }
+
+    // output = a=g^s * X^c mod p || b=h^s * b^c mod p
+    pub fn verify(
+        &self,
+        a: &BigUint,
+        b: &BigUint,
+        y1: &BigUint,
+        y2: &BigUint,
+        s: &BigUint,
+        c: &BigUint,
+    ) -> bool {
+        let cond1 = *a == &self.g.modpow(s, &self.p) * y1.modpow(c, &self.p) % &self.p;
+        let cond2 = *b == &self.h.modpow(s, &self.p) * y2.modpow(c, &self.p) % &self.p;
+
+        cond1 && cond2
+    }
+
+    // generate random number
+    pub fn generate_random_less_than(bound: &BigUint) -> BigUint {
+        let mut rng = rand::thread_rng();
+        rng.gen_biguint_below(bound)
     }
 }
-
-// output = a=g^s * X^c mod p || b=h^s * b^c mod p
-pub fn verify(
-    a: &BigUint,
-    b: &BigUint,
-    g: &BigUint,
-    h: &BigUint,
-    y1: &BigUint,
-    y2: &BigUint,
-    s: &BigUint,
-    c: &BigUint,
-    p: &BigUint,
-) -> bool {
-    let cond1 = *a == g.modpow(s, p) * y1.modpow(c, p) % p;
-    let cond2 = *b == h.modpow(s, p) * y2.modpow(c, p) % p;
-
-    cond1 && cond2
-}
-
-// generate random number
-pub fn generate_random_less_than(bound:&BigUint)->BigUint{
-    let mut rng=rand::thread_rng();
-    rng.gen_biguint_below(bound)
-}   
