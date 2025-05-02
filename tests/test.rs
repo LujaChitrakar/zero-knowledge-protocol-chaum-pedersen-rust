@@ -1,5 +1,3 @@
-use std::result;
-
 use num_bigint::BigUint;
 use zkp_chaum_pedersen::ZKP;
 
