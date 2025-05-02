@@ -22,14 +22,14 @@ pub fn verify(
     b: &BigUint,
     g: &BigUint,
     h: &BigUint,
-    x: &BigUint,
-    y: &BigUint,
+    y1: &BigUint,
+    y2: &BigUint,
     s: &BigUint,
     c: &BigUint,
     p: &BigUint,
 ) -> bool {
-    let cond1 = *a == g.modpow(s, p) * x.modpow(c, p) % p;
-    let cond2 = *b == h.modpow(s, p) * y.modpow(c, p) % p;
+    let cond1 = *a == g.modpow(s, p) * y1.modpow(c, p) % p;
+    let cond2 = *b == h.modpow(s, p) * y2.modpow(c, p) % p;
 
     cond1 && cond2
 }
